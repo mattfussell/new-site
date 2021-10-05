@@ -264,3 +264,8 @@ Add the following before the closing body tags in `base.njk`:
 </script>
 ```
 
+Open `.eleventy.js` and create a new passthrough filter to make the `.yml` file work.
+
+```javascript
+  eleventyConfig.addPassThroughCopy('./src/admin');
+```

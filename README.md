@@ -202,3 +202,65 @@ Inside `_includes`, create `article-snippet.njk`. Open that file as well as `blo
 Next, open up `index.njk` and delete all of the `<li>` elements in the *featured-articles* `<section>` element. Copy the for loop from the blog and paste it into the `<ul>` in `index.njk`. Change `collections.post` to `collections.featured`. Further up the page, remove the `.html` from the link to recent articles.
 
 ### Push the changes to github, and post this site to netlify.
+
+Once the site is on netlify, (remember to update the site directory to public), you'll attach the [netlify cms](https://www.netlifycms.org/) who's docs are found [here](https://www.netlifycms.org/docs/intro/). Inside the `/src` folder, create a folder called `admin`. Create two files inside of it - `index.html` and `config.yml`. Enter the following into `index.html`:
+
+```html
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Content Manager</title>
+</head>
+<body>
+  <!-- Include the script that builds the page and powers Netlify CMS -->
+  <script src="https://unpkg.com/netlify-cms@^2.0.0/dist/netlify-cms.js"></script>
+</body>
+</html>
+```
+
+Next, enter the following into `config.yml`:
+
+```yml
+backend:
+  name: git-gateway
+  branch: main
+publish_mode: editorial_workflow
+media_folder: "public/assets/blog"
+public_folder: "/assets/blog"
+collections:
+  - name: "blog"
+    label: "Blog"
+    folder: "src/blog"
+    create: true
+    slug: "{{year}}-{{month}}-{{day}}-{{slug}}"
+    fields:
+      - { label: "Title", name: "title", widget: "string" }
+      - { label: "Description", name: "description", widget: "string" }
+      - { label: "Author", name: "author", widget: "string" }
+      - { label: "Date", name: "date", widget: "datetime" }
+      - { label: "Tags", name: "tags", widget: "list", default: ["post"] }
+      - { label: "Featured Image", name: "image", widget: "image" }
+      - { label: "Image Caption", name: "imageAlt", widget: "string" }
+      - { label: "Body", name: "body", widget: "markdown" }
+```
+
+Next, follow the documentation and go to netlify and set up authentication. After everything is turned on on Netlify, add this to the `<head>` of the `index.html` in the `/admin` folder and in `base.njk` - use `defer`.
+
+Add the following before the closing body tags in `base.njk`:
+
+```html
+<script>
+  if (window.netlifyIdentity) {
+    window.netlifyIdentity.on("init", user => {
+      if (!user) {
+        window.netlifyIdentity.on("login", () => {
+          document.location.href = "/admin/";
+        });
+      }
+    });
+  }
+</script>
+```
+

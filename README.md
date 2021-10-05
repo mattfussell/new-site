@@ -180,3 +180,25 @@ eleventyConfig.addFilter("postDate", (dateObj) => {
 ```
 
 Return to the `blog.njk` file, and on the author line, modify `{{ post.data.date }}` to be `{{ post.data.date | postDate }}`.
+
+Next, the individual articles need fixed. Rename `individual-article.html` to be `article.njk` and move it to `_includes`. Like was done to the previous files, remove the extra html tags. Add the following front matter:
+
+```nunjucks
+---
+layout: 'base.njk'
+---
+```
+Change the text inside the `<h1>` that reads *My Third Article* to be `{{ title }}`. Update the `src` attribute of the image to be `{{ image }}` and the `alt` attribute to be `{{ imageAlt }}`. Likewise, the `<figcaption>` text content should be `{{ imageAlt }}`. Below the `<figure>` but still inside the `<div>`, add `{{ content | safe }}`. Save that, then go back and open the `blog.json` file, and update the contents to be the following:
+
+```json
+{
+  "layout": "article.njk",
+  "tags": "post"
+}
+```
+
+Inside `_includes`, create `article-snippet.njk`. Open that file as well as `blog.njk`. Inside `blog.njk`, cut everything inside the for loop and paste it into `article-snippet.njk` and save. Back inside the for loop in `blog.njk`, insert `{% include 'article-snippet.njk' %}`.
+
+Next, open up `index.njk` and delete all of the `<li>` elements in the *featured-articles* `<section>` element. Copy the for loop from the blog and paste it into the `<ul>` in `index.njk`. Change `collections.post` to `collections.featured`. Further up the page, remove the `.html` from the link to recent articles.
+
+### Push the changes to github, and post this site to netlify.
